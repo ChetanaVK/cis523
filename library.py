@@ -60,7 +60,7 @@ class MappingTransformer(BaseEstimator, TransformerMixin):
     return result
   
 class DropColumnsTransformer(BaseEstimator, TransformerMixin):
-  def __init__(self, column_list, action):
+  def __init__(self, column_list, action='drop'):
     assert action in ['keep', 'drop'], f'{self.__class__.__name__} action {action} not in ["keep", "drop"]'
     self.column_list=column_list
     self.action=action
@@ -184,12 +184,11 @@ class MinMaxTransformer(BaseEstimator, TransformerMixin):
 
   def transform(self, X):
     X_=X.copy()
-    min=X_.min()
-    max=X_.max()
-    denom=max-min
-    X_ -=min
-    X_ /=denom
-    return X_
+    from sklearn.preprocessing import MinMaxScaler
+    scaler=MinMaxScaler()
+    column_name=X_.columns.to_list()
+    scaler_df=pd.DataFrame(scaler.fit_transform(X),columns = column_name)
+    return scaler_df
 
   def fit_transform(self, X, y = None):
     result = self.transform(X)
