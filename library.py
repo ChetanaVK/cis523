@@ -200,4 +200,28 @@ class KNNTransformer(BaseEstimator, TransformerMixin):
     return result
 
 
+class PearsonTransformer(BaseEstimator, TransformerMixin):
+
+  def __init__(self, coef_thres):
+    self.coef_thres = coef_thres
+    
+
+  def fit(self, X, y = None):
+    print(f"\nWarning: {self.__class__.__name__}.fit does nothing.\n")
+    return X
+
+  def transform(self, X):
+    X_ = X.copy()
+    df_corr = X_.corr(method='pearson')
+    true_masked_df= df_corr.mask((df_corr.abs()>self.coef_thres),True|(df_corr.abs()<self.coef_thres),False)
+    masked_df=true_masked_df.mask((true_masked_df.abs()<self.coef_thres),False)
+    masked_df.values[np.tril_indices_from(masked_df.values)] = False
+    correlated_columns= [column for column in masked_df.columns.to_list() if np.any(masked_df[column]==True)]
+    X_ = X.drop(columns=correlated_columns)
+    return X_
+
+  def fit_transform(self, X, y = None):
+    result = self.transform(X)
+    return result
+
   
