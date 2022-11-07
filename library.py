@@ -246,4 +246,107 @@ class PearsonTransformer(BaseEstimator, TransformerMixin):
     result = self.transform(X)
     return result
 
+def dataset_setup(full_table, label_column_name:str, the_transformer, rs, ts=.2):
+  #your code below
+  from sklearn.model_selection import train_test_split
+  from sklearn.pipeline import Pipeline
+
+  features_only = full_table.drop(columns=label_column_name)
+  labels = full_table[label_column_name].to_list()
+
+  #rs value is 40. 
+  X_train, X_test, y_train, y_test = train_test_split(features_only, labels, test_size=0.2, shuffle=True, random_state=rs, stratify=labels)
+
+  '''
+  the_transformer = Pipeline(steps=[
+    ('drop', DropColumnsTransformer(['Age', 'Gender', 'Class', 'Joined', 'Married',  'Fare'], 'keep')),
+    ('gender', MappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('class', MappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
+    ('ohe', OHETransformer(target_column='Joined')),
+    ('age', TukeyTransformer(target_column='Age', fence='outer')), #from chapter 4
+    ('fare', TukeyTransformer(target_column='Fare', fence='outer')), #from chapter 4
+    ('minmax', MinMaxTransformer()),  #from chapter 5
+    ('imputer', KNNTransformer())  #from chapter 6
+    ], verbose=True)
+  '''
+
+  X_train_transformed = the_transformer.fit_transform(X_train)
+  X_test_transformed = the_transformer.fit_transform(X_test)
+
+  x_trained_numpy = X_train_transformed.to_numpy()
+  x_test_numpy = X_test_transformed.to_numpy()
+  y_train_numpy = np.array(y_train)
+  y_test_numpy = np.array(y_test)
+
+  return x_trained_numpy, x_test_numpy, y_train_numpy, y_test_numpy  
+
+def titanic_setup(titanic_table, transformer=titanic_transformer, rs=40, ts=.2):
+  from sklearn.model_selection import train_test_split
+  from sklearn.pipeline import Pipeline
+
+  titanic_features = titanic_table.drop(columns='Survived')
+  labels = titanic_table['Survived'].to_list()
+
+
+  #rs value is 40. 
+  X_train, X_test, y_train, y_test = train_test_split(titanic_features, labels, test_size=0.2, shuffle=True, random_state=rs, stratify=labels)
+
+  '''
+  the_transformer = Pipeline(steps=[
+    ('drop', DropColumnsTransformer(['Age', 'Gender', 'Class', 'Joined', 'Married',  'Fare'], 'keep')),
+    ('gender', MappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('class', MappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
+    ('ohe', OHETransformer(target_column='Joined')),
+    ('age', TukeyTransformer(target_column='Age', fence='outer')), #from chapter 4
+    ('fare', TukeyTransformer(target_column='Fare', fence='outer')), #from chapter 4
+    ('minmax', MinMaxTransformer()),  #from chapter 5
+    ('imputer', KNNTransformer())  #from chapter 6
+    ], verbose=True)
+  '''
+
+  X_train_transformed = transformer.fit_transform(X_train)
+  X_test_transformed = transformer.fit_transform(X_test)
+
+  x_trained_numpy = X_train_transformed.to_numpy()
+  x_test_numpy = X_test_transformed.to_numpy()
+  y_train_numpy = np.array(y_train)
+  y_test_numpy = np.array(y_test)
+
+  return x_trained_numpy, x_test_numpy, y_train_numpy, y_test_numpy  
+
+def customer_setup(customer_table, transformer=customer_transformer, rs=76, ts=.2):
+
+  from sklearn.model_selection import train_test_split
+  from sklearn.pipeline import Pipeline
+
+  customer_features = customer_table.drop(columns='Rating')
+  labels = customer_table['Rating'].to_list()
+
+
+  #rs value is 40. 
+  X_train, X_test, y_train, y_test = train_test_split(customer_features, labels, test_size=0.2, shuffle=True, random_state=rs, stratify=labels)
+
+  '''
+  the_transformer = Pipeline(steps=[
+    ('drop', DropColumnsTransformer(['Age', 'Gender', 'Class', 'Joined', 'Married',  'Fare'], 'keep')),
+    ('gender', MappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('class', MappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
+    ('ohe', OHETransformer(target_column='Joined')),
+    ('age', TukeyTransformer(target_column='Age', fence='outer')), #from chapter 4
+    ('fare', TukeyTransformer(target_column='Fare', fence='outer')), #from chapter 4
+    ('minmax', MinMaxTransformer()),  #from chapter 5
+    ('imputer', KNNTransformer())  #from chapter 6
+    ], verbose=True)
+  '''
+
+  X_train_transformed = transformer.fit_transform(X_train)
+  X_test_transformed = transformer.fit_transform(X_test)
+
+  x_trained_numpy = X_train_transformed.to_numpy()
+  x_test_numpy = X_test_transformed.to_numpy()
+  y_train_numpy = np.array(y_train)
+  y_test_numpy = np.array(y_test)
+
+  return x_trained_numpy, x_test_numpy, y_train_numpy, y_test_numpy
+
   
