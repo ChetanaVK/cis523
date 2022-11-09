@@ -280,6 +280,19 @@ def dataset_setup(full_table, label_column_name:str, the_transformer, rs, ts=.2)
 
   return x_trained_numpy, x_test_numpy, y_train_numpy, y_test_numpy  
 
+from sklearn.pipeline import Pipeline
+
+titanic_transformer = Pipeline(steps=[
+    ('drop', DropColumnsTransformer(['Age', 'Gender', 'Class', 'Joined', 'Married',  'Fare'], 'keep')),
+    ('gender', MappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('class', MappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
+    ('ohe', OHETransformer(target_column='Joined')),
+    ('age', TukeyTransformer(target_column='Age', fence='outer')), #from chapter 4
+    ('fare', TukeyTransformer(target_column='Fare', fence='outer')), #from chapter 4
+    ('minmax', MinMaxTransformer()),  #from chapter 5
+    ('imputer', KNNTransformer())  #from chapter 6
+    ], verbose=True)
+
 def titanic_setup(titanic_table, transformer=titanic_transformer, rs=40, ts=.2):
   from sklearn.model_selection import train_test_split
   from sklearn.pipeline import Pipeline
