@@ -327,6 +327,7 @@ def titanic_setup(titanic_table, transformer=titanic_transformer, rs=40, ts=.2):
 
   return x_trained_numpy, x_test_numpy, y_train_numpy, y_test_numpy  
 
+from sklearn.pipeline import Pipeline
 
 #Build pipeline and include minmax from last chapter
 customer_transformer = Pipeline(steps=[
