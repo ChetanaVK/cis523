@@ -327,6 +327,19 @@ def titanic_setup(titanic_table, transformer=titanic_transformer, rs=40, ts=.2):
 
   return x_trained_numpy, x_test_numpy, y_train_numpy, y_test_numpy  
 
+
+#Build pipeline and include minmax from last chapter
+customer_transformer = Pipeline(steps=[
+    ('id', DropColumnsTransformer(column_list=['ID'])),  #you may need to add an action if you have no default
+    ('os', OHETransformer(target_column='OS')),
+    ('isp', OHETransformer(target_column='ISP')),
+    ('level', MappingTransformer('Experience Level', {'low': 0, 'medium': 1, 'high':2})),
+    ('gender', MappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('time spent', TukeyTransformer('Time Spent', 'inner')),
+    ('minmax', MinMaxTransformer()),
+    ('imputer', KNNTransformer())
+    ], verbose=True)
+
 def customer_setup(customer_table, transformer=customer_transformer, rs=76, ts=.2):
 
   from sklearn.model_selection import train_test_split
