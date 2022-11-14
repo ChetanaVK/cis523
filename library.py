@@ -376,6 +376,8 @@ def customer_setup(customer_table, transformer=customer_transformer, rs=76, ts=.
 
   return x_trained_numpy, x_test_numpy, y_train_numpy, y_test_numpy
 
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+
 def threshold_results(thresh_list, actuals, predicted):
   result_df = pd.DataFrame(columns=['threshold', 'precision', 'recall', 'f1', 'accuracy'])
   for t in thresh_list:
