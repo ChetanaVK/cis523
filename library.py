@@ -7,6 +7,7 @@ from sklearn.metrics import f1_score#, balanced_accuracy_score, precision_score,
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
+from xgboost import XGBClassifier
 
 
 def find_random_state(features_df, labels, n=200):
