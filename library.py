@@ -16,6 +16,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 from sklearn.model_selection import RandomizedSearchCV 
+from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 
 
 def find_random_state(features_df, labels, n=200):
