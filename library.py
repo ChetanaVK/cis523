@@ -15,6 +15,8 @@ from tensorflow.keras.layers import Dense, Activation, Dropout
 import tensorflow as tf
 from tensorflow import keras
 
+from sklearn.model_selection import RandomizedSearchCV 
+
 
 def find_random_state(features_df, labels, n=200):
   model = KNeighborsClassifier(n_neighbors=5)
