@@ -10,6 +10,11 @@ from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 from sklearn.metrics import roc_auc_score
 
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense, Activation, Dropout
+import tensorflow as tf
+from tensorflow import keras
+
 
 def find_random_state(features_df, labels, n=200):
   model = KNeighborsClassifier(n_neighbors=5)
@@ -423,6 +428,11 @@ def halving_search(model, grid, x_train, y_train, factor=3, scoring='roc_auc'):
   grid_result = halving_cv.fit(x_train, y_train)
   
   return grid_result
+
+try:
+  auc  #avoid instantiating twice - strange behavior
+except:
+  auc = tf.keras.metrics.AUC()
 
 def ann_build_binary_model(*, n:int, architecture, metrics=auc, learning_rate=.02):
   assert isinstance(n, int), f'n is an int, the number of columns/features of each sample. Instead got {type(n)}'
