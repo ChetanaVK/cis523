@@ -424,4 +424,36 @@ def halving_search(model, grid, x_train, y_train, factor=3, scoring='roc_auc'):
   
   return grid_result
 
-  
+def ann_build_binary_model(*, n:int, architecture, metrics=auc, learning_rate=.02):
+  assert isinstance(n, int), f'n is an int, the number of columns/features of each sample. Instead got {type(n)}'
+  assert isinstance(architecture, list) or isinstance(architecture, tuple), f'architecture is a list or tuple, the number of nodes per layer. Instead got {type(architecture)}'
+  assert architecture, f'architecture is empty'
+  assert isinstance(architecture[0], list), f'architecture should be list of one or more lists but instead {architecture}'
+
+  l2_regu = tf.keras.regularizers.L2(0.01)  #weight regularization during gradient descent
+  initializer = tf.keras.initializers.HeNormal(seed=1234)  #works best with Relu: https://machinelearningmastery.com/weight-initialization-for-deep-learning-neural-networks/
+
+  model = Sequential()
+
+  #handle first hidden layer separately because of input_dim
+
+  layer_units = architecture[0][0]
+  layer_dropout = architecture[0][1]
+  layer_act = architecture[0][2]
+  model.add(Dense(units=layer_units, activation=layer_act, activity_regularizer=l2_regu, kernel_initializer=initializer, input_dim=n))  #first hidden layer needs number of inputs
+  model.add(Dropout(layer_dropout))
+
+  for layer in architecture[1:]:
+    layer_units = layer[0]
+    layer_dropout = layer[1]
+    layer_act = layer[2]
+    model.add(Dense(units=layer_units, activation=layer_act, activity_regularizer=l2_regu, kernel_initializer=initializer))
+    model.add(Dropout(layer_dropout))
+    
+  #now output layer
+  model.add(Dense(units=1, activation='sigmoid'))
+
+  model.compile(loss=tf.keras.losses.BinaryCrossentropy(),  #hard code loss
+              optimizer=tf.keras.optimizers.RMSprop(learning_rate=learning_rate),  #hard code optimizer
+              metrics=[metrics])
+  return model
